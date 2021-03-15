@@ -198,11 +198,13 @@ class GPSEphemeris(Ephemeris):
     # Iteratively solve for the Eccentric Anomaly (from Keith Alter and David Johnston)
     ea = ma  # Starting value for E
 
-    ea_old = 2222
-    while fabs(ea - ea_old) > 1.0E-14:
+    ea_old = None
+    iteration = 0
+    while (ea_old is None or fabs(ea - ea_old) > 1.0E-14) and iteration < 20:
       ea_old = ea
       tempd1 = 1.0 - eph['ecc'] * cos(ea_old)
       ea = ea + (ma - ea_old + eph['ecc'] * sin(ea_old)) / tempd1
+      iteration += 1
     ea_dot = ma_dot / tempd1
 
     # Relativistic correction term
